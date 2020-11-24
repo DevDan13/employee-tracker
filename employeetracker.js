@@ -20,24 +20,47 @@ const connection = mysql.createConnection({
 });
 
 // connect to the mysql server and sql database
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) throw err;
   // run the admin function after the connection is made to prompt the company admin
   admin();
 });
 
-function admin(){
+function admin() {
 
-    inquirer.prompt({
-        name: "adminMenu",
-        type: "list",
-        message: "what would you like to do?",
-        choices: ["Add a Department", "Add a Role", "Add an Employee","View a Department", "View a Role", "View an Employee", "Update Employee Roles"]
+  console.log(
+    logo({
+      name: 'Employee Tracker',
+      font: 'Speed',
+      lineChars: 10,
+      padding: 2,
+      margin: 3,
+      borderColor: 'yellow',
+      logoColor: 'bold-green',
+      textColor: 'green',
     })
-     .then(function(answer){
-       //  if(answer.adminMenu === "View a Department")
+      .emptyLine()
+      .render()
+  );
+  inquirer.prompt({
+    name: "adminMenu",
+    type: "list",
+    message: "what would you like to do?",
+    choices: ["Add a Department", "Add a Role", "Add an Employee", "View a Department", "View a Role", "View an Employee", "Update Employee Roles"]
+  })
+    .then(function (answer) {
+      //  if(answer.adminMenu === "View a Department")
 
-       switch(answer.adminMenu) {
+      switch (answer.adminMenu) {
+        case 'Add a Department':
+          addDepartment();
+          break;
+        case 'Add a Role':
+          addRole();
+          break;
+        case 'Add an Employee':
+          addEmployee();
+          break;
         case 'View a Department':
           viewDepartment();
           break;
@@ -47,48 +70,147 @@ function admin(){
         case 'View an Employee':
           viewEmployee();
           break;
+        case 'Update an Employee':
+          updateEmployee();
+          break;
         default:
           // code block
           connection.end();
       }
-     });
+    });
 }
 
-function viewDepartment(){
-    console.log(`hit`);
-    connection.query(
-        `SELECT * FROM department`,
-        function(error, result){
-            if(error) throw error;
-            console.log("");
-            console.table(result);
+function addDepartment() {
+
+  inquirer.prompt([
+    {
+      name: "department",
+      type: "input",
+      message: "what is the name of your new department?: "
+    }
+  ])
+    .then(function (answer) {
+      connection.query(
+        `INSERT INTO department SET ?`,
+        {
+          dep_name: answer.department
+        },
+        function(error){
+          if (error) throw error;
+          console.log("Department created sucessfully")
+          admin();
         }
-    )
-    admin();
+      );
+    });
 }
 
-function viewRole(){
-    console.log(`hit`);
-    connection.query(
-        `SELECT * FROM role`,
-        function(error, result){
-            if(error) throw error;
+function addRole() {
 
-            console.table(result);
+  inquirer.prompt([
+    {
+      name: "role",
+      type: "input",
+      message: "what is the title of your new role?: "
+    },
+    {
+      name: "salary",
+      type: "input",
+      message: "what is the salary of your new role?: "
+    },
+    {
+      name: "id",
+      type: "input",
+      message: "what is the id of your new role?: "
+    },
+  ])
+    .then(function (answer) {
+      connection.query(
+        `INSERT INTO role SET ?`,
+        {
+          title: answer.role,
+          salary: answer.salary,
+          department_id: answer.id
+        },
+        function(error){
+          if (error) throw error;
+          console.log("role created sucessfully")
+          admin();
         }
-    )
-    admin();
+      );
+    });
 }
 
-function viewEmployee(){
-    console.log(`hit`);
-    connection.query(
-        `SELECT * FROM employee`,
-        function(error, result){
-            if(error) throw error;
+function addEmployee() {
 
-            console.table(result);
+  inquirer.prompt([
+    {
+      name: "firstName",
+      type: "input",
+      message: "what is your employee's first name?: "
+    },
+    {
+      name: "lastName",
+      type: "input",
+      message: "what is your employee's last name?: "
+    },
+    {
+      name: "roleId",
+      type: "input",
+      message: "what is your employee's role id?: "
+    },
+  ])
+    .then(function (answer) {
+      connection.query(
+        `INSERT INTO employee SET ?`,
+        {
+          first_name: answer.firstName,
+          last_name: answer.lastName,
+          role_id: answer.roleId
+        },
+        function(error){
+          if (error) throw error;
+          console.log("Employee created sucessfully")
+          admin();
         }
-    )
-    admin();
+      );
+    });
+}
+
+function viewDepartment() {
+  console.log(`hit`);
+  connection.query(
+    `SELECT * FROM department`,
+    function (error, result) {
+      if (error) throw error;
+      console.log("");
+      console.table(result);
+      admin();
+    }
+  )
+}
+
+function viewRole() {
+  console.log(`hit`);
+  connection.query(
+    `SELECT * FROM role`,
+    function (error, result) {
+      if (error) throw error;
+      console.log("");
+      console.table(result);
+      admin();
+    }
+  )
+}
+
+function viewEmployee() {
+  console.log(`hit`);
+  connection.query(
+    `SELECT * FROM employee`,
+    function (error, result) {
+      if (error) throw error;
+      console.log("");
+      console.table(result);
+      admin();
+    }
+  )
 }
