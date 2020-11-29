@@ -2,7 +2,7 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const logo = require('asciiart-logo');
 
-//const cTable = require("console.table");
+const cTable = require("console.table");
 
 // create the connection information for the sql database
 const connection = mysql.createConnection({
@@ -46,7 +46,7 @@ function admin() {
     name: "adminMenu",
     type: "list",
     message: "what would you like to do?",
-    choices: ["Add a Department", "Add a Role", "Add an Employee", "View a Department", "View a Role", "View an Employee", "Update Employee Roles"]
+    choices: ["Add a Department", "Add a Role", "Add an Employee", "View all Departments", "View all Roles", "View all Employees", "Update Employee Role"]
   })
     .then(function (answer) {
       //  if(answer.adminMenu === "View a Department")
@@ -58,20 +58,20 @@ function admin() {
         case 'Add a Role':
           addRole();
           break;
-        case 'Add an Employee':
+        case 'Add an Employees':
           addEmployee();
           break;
-        case 'View a Department':
-          viewDepartment();
+        case 'View all Departments':
+          viewDepartments();
           break;
-        case 'View a Role':
-          viewRole();
+        case 'View all Roles':
+          viewRoles();
           break;
-        case 'View an Employee':
-          viewEmployee();
+        case 'View all Employees':
+          viewEmployees();
           break;
-        case 'Update an Employee':
-          updateEmployee();
+        case 'Update Employee role':
+          updateEmployeeRole();
           break;
         default:
           // code block
@@ -156,7 +156,7 @@ function addEmployee() {
     {
       name: "roleId",
       type: "input",
-      message: "what is your employee's role id?: "
+      message: "what is your employee's role? Input ID number please (1,2,3,4,5,etc): ",
     },
   ])
     .then(function (answer) {
@@ -176,7 +176,7 @@ function addEmployee() {
     });
 }
 
-function viewDepartment() {
+function viewDepartments() {
   console.log(`hit`);
   connection.query(
     `SELECT * FROM department`,
@@ -184,12 +184,12 @@ function viewDepartment() {
       if (error) throw error;
       console.log("");
       console.table(result);
-      admin();
     }
   )
+  admin();
 }
 
-function viewRole() {
+function viewRoles() {
   console.log(`hit`);
   connection.query(
     `SELECT * FROM role`,
@@ -197,12 +197,12 @@ function viewRole() {
       if (error) throw error;
       console.log("");
       console.table(result);
-      admin();
     }
   )
+  admin();
 }
 
-function viewEmployee() {
+function viewEmployees() {
   console.log(`hit`);
   connection.query(
     `SELECT * FROM employee`,
@@ -210,7 +210,12 @@ function viewEmployee() {
       if (error) throw error;
       console.log("");
       console.table(result);
-      admin();
+     
     }
   )
+  admin();
 }
+
+// function updateEmployeeRole(){
+
+// }
