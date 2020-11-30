@@ -46,7 +46,7 @@ function admin() {
     name: "adminMenu",
     type: "list",
     message: "what would you like to do?",
-    choices: ["Add a Department", "Add a Role", "Add an Employee", "View all Departments", "View all Roles", "View all Employees", "Update Employee Role"]
+    choices: ["Add a Department", "Add a Role", "Add an Employee", "View all", "View all Departments", "View all Roles", "View all Employees", "Update Employee Role"]
   })
     .then(function (answer) {
       //  if(answer.adminMenu === "View a Department")
@@ -61,6 +61,9 @@ function admin() {
         case 'Add an Employees':
           addEmployee();
           break;
+        case 'View all':
+          viewAll();
+          break;
         case 'View all Departments':
           viewDepartments();
           break;
@@ -70,11 +73,12 @@ function admin() {
         case 'View all Employees':
           viewEmployees();
           break;
-        case 'Update Employee role':
+        case 'Update Employee Role':
           updateEmployeeRole();
           break;
         default:
           // code block
+          console.log("uh oh");
           connection.end();
       }
     });
@@ -176,6 +180,21 @@ function addEmployee() {
     });
 }
 
+function viewAll(){
+  console.log(`hit`);
+  connection.query(
+    `SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.dep_name AS department FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id;`,
+    function (error, result) {
+      if (error) throw error;
+      console.log("");
+      console.log("");
+      console.table(result);
+      console.log("");
+      console.log("");
+    }
+  )
+  admin();
+}
 function viewDepartments() {
   console.log(`hit`);
   connection.query(
@@ -183,7 +202,10 @@ function viewDepartments() {
     function (error, result) {
       if (error) throw error;
       console.log("");
+      console.log("");
       console.table(result);
+      console.log("");
+      console.log("");
     }
   )
   admin();
@@ -196,7 +218,10 @@ function viewRoles() {
     function (error, result) {
       if (error) throw error;
       console.log("");
+      console.log("");
       console.table(result);
+      console.log("");
+      console.log("");
     }
   )
   admin();
@@ -209,13 +234,56 @@ function viewEmployees() {
     function (error, result) {
       if (error) throw error;
       console.log("");
+      console.log("");
       console.table(result);
-     
+      console.log("");
+      console.log("");
     }
   )
   admin();
 }
 
-// function updateEmployeeRole(){
-
-// }
+function updateEmployeeRole(){
+  console.log("hit");
+  connection.query("SELECT * FROM employee;", function (error, results) {
+    inquirer
+      .prompt([
+        {
+          name: "id",
+          type: "list",
+          choices: function () {
+            let onThePayRoll = [];
+            for (let i = 0; i < results.length; i++) {
+              onThePayRoll.push(results[i].id);
+            }
+            return onThePayRoll;
+          },
+          message: "What is the employee's id?: ",
+        },
+        {
+          name: "new_role",
+          type: "input",
+          message: "What will the new role id be?(1,2,3,4,5,etc): ",
+        },
+      ]).then(function (answer) {
+        let selectedEmployee;
+        for (let i = 0; i < results.length; i++) {
+          if (results[i].id === answer.id) {
+            selectedEmployee = results[i];
+          }
+        }
+        connection.query("UPDATE employee SET ? WHERE ?;",
+          [{
+            role_id: answer.new_role,
+          },
+          {
+            id: selectedEmployee.id,
+          }],
+          function (error) {
+            if (error) throw error;
+            console.log("Employee updated succesfully");
+          });
+          admin();
+      });
+  });
+}
