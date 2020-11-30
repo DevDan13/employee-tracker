@@ -16,8 +16,11 @@
 The Employee Tracker is a tool designed for administrators to be able to keep track of their departments, roles, and employees.  They have the ability to not only view these things, but to add a new department,role, or employee to the database as they please.  This data will be added to the database and the admin can also update the role for a desired employee.  They could change an employee working in finance to the mailroom for example.
 
 ### Video Demo
+<br>
 
+![DemoGif](public\assets\gif\EmployeeTracker.gif)
 
+<br>
 
 ## Installation
 
