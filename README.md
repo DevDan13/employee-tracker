@@ -18,7 +18,7 @@ The Employee Tracker is a tool designed for administrators to be able to keep tr
 ### Video Demo
 <br>
 
-![](public\assets\gif\EmployeeTracker.gif)
+![videodemo](public\assets\gif\EmployeeTracker.gif)
 
 <br>
 
